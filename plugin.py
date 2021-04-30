@@ -71,6 +71,7 @@ class WebPage(QWebEnginePage):
                 pass
             
     def acceptNavigationRequest(self, url, req_type, is_main_frame):
+        print(url, req_type, is_main_frame)
         if req_type == QWebEnginePage.NavigationType.NavigationTypeReload:
             return True
         if req_type == QWebEnginePage.NavigationType.NavigationTypeBackForward:
@@ -110,7 +111,6 @@ class MainWindow(QMainWindow):
     def __init__(self, query, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         
-        mydir = os.path.dirname(os.path.abspath(__file__))
         self.query = query
         
         # creating a QWebEngineView
@@ -127,9 +127,9 @@ class MainWindow(QMainWindow):
         done_btn.setStatusTip('Close Reader')
         done_btn.triggered.connect(self.done)
         navtb.addAction(done_btn)
-
-        bookurl = QUrl.fromLocalFile(mydir + '/cloud-reader-lite/index.html')
+        bookurl = QUrl.fromLocalFile(SCRIPT_DIR + '/viewer/cloud-reader-lite/index.html')
         bookurl.setQuery(self.query)
+        print(bookurl)
         self.browser.setUrl(bookurl)
 
         # set this browser as central widget or main window
@@ -181,13 +181,24 @@ def run(bk):
         return -1
     
     # create your own current copy of all ebook contents in destination directory
-    # it must be relative and under the index.html used for the viewer
+    # it must be relative and under the index.html directory inside an epub_content directory
     viewer_home = os.path.join(SCRIPT_DIR, 'viewer', 'cloud-reader-lite')
-    temp_dir = tempfile.mkdtemp(suffix=None, prefix=None, dir=viewer_home)
-    bookdir = os.path.join(temp_dir, 'epub_content', 'ebook')
-    os.makedirs(bookdir)
+    epub_home = os.path.join(viewer_home, 'epub_content')
+    print(viewer_home)
+
+    bookdir = tempfile.mkdtemp(suffix=None, prefix=None, dir=epub_home)
+    bookdir_name = os.path.split(bookdir)[-1]
+    print(bookdir)
+
     bk.copy_book_contents_to(bookdir)
-    query = 'epub=' + os.path.join(os.path.dirname(temp_dir), 'epub_content', 'ebook')
+    # must add the mimetype
+    data = 'application/epub+zip'
+    mpath = os.path.join(bookdir, 'mimetype')
+    with open(mpath, 'wb') as f:
+        f.write(data.encode('utf-8'))
+        f.close()
+    query = 'epub=' + 'epub_content/' + bookdir_name + '/'
+    print(query)
 
     if not ismacos:
         setup_highdpi(bk._w.highdpi)
@@ -205,10 +216,10 @@ def run(bk):
     app.exec_()
     
     # done with temp folder so clean up after yourself
-    shutil.rmtree(temp_dir)
+    shutil.rmtree(bookdir)
     
-    print("Updating Complete")
-    bk.savePrefs(prefs)
+    # print("Updating Complete")
+    # bk.savePrefs(prefs)
 
     # Setting the proper Return value is important.
     # 0 - means success

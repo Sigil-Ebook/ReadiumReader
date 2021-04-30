@@ -1,6 +1,26 @@
---- readium-js-viewer_all_LITE.js.orig	2021-04-26 13:54:44.000000000 -0400
-+++ readium-js-viewer_all_LITE.js	2021-04-28 12:04:55.000000000 -0400
-@@ -63080,7 +63080,9 @@
+--- readium-js-viewer_all_LITE.js.orig	2021-04-29 20:57:17.000000000 -0400
++++ readium-js-viewer_all_LITE.js	2021-04-30 10:32:48.000000000 -0400
+@@ -15576,9 +15576,10 @@
+       encode: {
+         // RFC3986 2.1: For consistency, URI producers and normalizers should
+         // use uppercase hexadecimal digits for all percent-encodings.
+-        expression: /%(24|26|2B|2C|3B|3D|3A|40)/ig,
++        expression: /%(20|24|26|2B|2C|3B|3D|3A|40)/ig,
+         map: {
+           // -._~!'()*
++          '%20': ' ',  
+           '%24': '$',
+           '%26': '&',
+           '%2B': '+',
+@@ -15592,6 +15593,7 @@
+       decode: {
+         expression: /[\/\?#]/g,
+         map: {
++          ' ': '%20',      
+           '/': '%2F',
+           '?': '%3F',
+           '#': '%23'
+@@ -63080,7 +63082,9 @@
  
        var complete = function () {
          var prevHoverState = that.hoverState
@@ -11,7 +31,7 @@
          that.hoverState = null
  
          if (prevHoverState == 'out') that.leave(that)
-@@ -63324,7 +63326,9 @@
+@@ -63324,7 +63328,9 @@
      var that = this
      clearTimeout(this.timeout)
      this.hide(function () {
@@ -22,7 +42,7 @@
        if (that.$tip) {
          that.$tip.detach()
        }
-@@ -73531,4 +73535,4 @@
+@@ -73531,4 +73537,4 @@
  
  require(["readium_shared_js/globalsSetup", "readium_js_viewer/ReadiumViewerLite"]);
  

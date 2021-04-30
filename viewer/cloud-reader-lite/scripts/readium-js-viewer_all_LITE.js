@@ -15576,9 +15576,10 @@ define("console_shim", function(){});
       encode: {
         // RFC3986 2.1: For consistency, URI producers and normalizers should
         // use uppercase hexadecimal digits for all percent-encodings.
-        expression: /%(24|26|2B|2C|3B|3D|3A|40)/ig,
+        expression: /%(20|24|26|2B|2C|3B|3D|3A|40)/ig,
         map: {
           // -._~!'()*
+          '%20': ' ',  
           '%24': '$',
           '%26': '&',
           '%2B': '+',
@@ -15592,6 +15593,7 @@ define("console_shim", function(){});
       decode: {
         expression: /[\/\?#]/g,
         map: {
+          ' ': '%20',      
           '/': '%2F',
           '?': '%3F',
           '#': '%23'
