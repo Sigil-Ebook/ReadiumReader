@@ -197,7 +197,7 @@ def run(bk):
     with open(mpath, 'wb') as f:
         f.write(data.encode('utf-8'))
         f.close()
-    query = 'epub=' + 'epub_content/' + bookdir_name + '/'
+    query = 'epub=epub_content/' + bookdir_name + '/'
     print(query)
 
     if not ismacos:

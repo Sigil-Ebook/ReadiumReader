@@ -1,2 +1,6 @@
+v020
+  - fixed issue with spaces in path names in readium javascript code
+  - fixed issue in building query
+  - fixed minor typos and cleaned up the code a bit
 v010
   - first public release of ReadiumReader plugin for Sigil
