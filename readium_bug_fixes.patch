@@ -1,0 +1,31 @@
+--- readium-js-viewer_all_LITE.js.orig	2021-04-26 13:54:44.000000000 -0400
++++ readium-js-viewer_all_LITE.js	2021-04-28 12:04:55.000000000 -0400
+@@ -63080,7 +63080,9 @@
+ 
+       var complete = function () {
+         var prevHoverState = that.hoverState
+-        that.$element.trigger('shown.bs.' + that.type)
++        if (that.$element) {  
++          that.$element.trigger('shown.bs.' + that.type)
++        }
+         that.hoverState = null
+ 
+         if (prevHoverState == 'out') that.leave(that)
+@@ -63324,7 +63326,9 @@
+     var that = this
+     clearTimeout(this.timeout)
+     this.hide(function () {
+-      that.$element.off('.' + that.type).removeData('bs.' + that.type)
++      if (that.$element) {
++          that.$element.off('.' + that.type).removeData('bs.' + that.type)
++      }
+       if (that.$tip) {
+         that.$tip.detach()
+       }
+@@ -73531,4 +73535,4 @@
+ 
+ require(["readium_shared_js/globalsSetup", "readium_js_viewer/ReadiumViewerLite"]);
+ 
+-//# sourceMappingURL=readium-js-viewer_all_LITE.js.map
+\ No newline at end of file
++//# sourceMappingURL=readium-js-viewer_all_LITE.js.map

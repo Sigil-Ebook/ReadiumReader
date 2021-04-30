@@ -1,0 +1,2 @@
+v010
+  - first public release of ReadiumReader plugin for Sigil

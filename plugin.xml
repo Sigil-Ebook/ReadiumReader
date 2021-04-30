@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+<name>ReadiumReader</name>
+<type>output</type>
+<author>Sigil</author>
+<description>Provide an epub3 reader to view the current epub being edited</description>
+<engine>python3.4</engine>
+<version>0.1.0</version>
+<autostart>true</autostart>
+<autoclose>true</autoclose>
+<oslist>osx,win,unx</oslist>
+</plugin>
