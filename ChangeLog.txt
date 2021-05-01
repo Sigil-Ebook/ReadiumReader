@@ -1,3 +1,7 @@
+v030
+  - fixed inconsistent handling of file paths across platforms
+  - moved away from QSettings to use standard bk.prefs to save geometry
+  - minor bug fixes
 v020
   - fixed issue with spaces in path names in readium javascript code
   - fixed issue in building query
