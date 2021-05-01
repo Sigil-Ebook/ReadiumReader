@@ -79,3 +79,8 @@ OpenCandy
 tags
 build
 
+# Temporary build directories
+ReadiumReader/
+
+# Zip files (plugin releases)
+*.zip
