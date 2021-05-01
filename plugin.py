@@ -32,7 +32,6 @@ except:
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-_USER_HOME = os.path.expanduser("~")
 
 _plat = sys.platform.lower()
 iswindows = 'win32' in _plat or 'win64' in _plat
@@ -71,7 +70,6 @@ class WebPage(QWebEnginePage):
                 pass
             
     def acceptNavigationRequest(self, url, req_type, is_main_frame):
-        print(url, req_type, is_main_frame)
         if req_type == QWebEnginePage.NavigationType.NavigationTypeReload:
             return True
         if req_type == QWebEnginePage.NavigationType.NavigationTypeBackForward:
@@ -108,10 +106,11 @@ class WebView(QWebEngineView):
 class MainWindow(QMainWindow):
 
     # constructor
-    def __init__(self, query, *args, **kwargs):
+    def __init__(self, query, prefs, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         
         self.query = query
+        self.prefs = prefs
         
         # creating a QWebEngineView
         self.browser = WebView()
@@ -119,17 +118,18 @@ class MainWindow(QMainWindow):
         # adding action when loading is finished
         self.browser.loadFinished.connect(self.update_title)
 
-        # creating QToolBar for navigation
+        # creating QToolBar for navigation and add close button
         navtb = QToolBar("Navigation")
-
         self.addToolBar(navtb)
         done_btn = QAction('Close', self)
         done_btn.setStatusTip('Close Reader')
         done_btn.triggered.connect(self.done)
         navtb.addAction(done_btn)
-        bookurl = QUrl.fromLocalFile(SCRIPT_DIR + '/viewer/cloud-reader-lite/index.html')
+        
+        # build url to launch readium with
+        readerpath = os.path.join(SCRIPT_DIR,'viewer','cloud-reader-lite','index.html')
+        bookurl = QUrl.fromLocalFile(readerpath)
         bookurl.setQuery(self.query)
-        print(bookurl)
         self.browser.setUrl(bookurl)
 
         # set this browser as central widget or main window
@@ -139,9 +139,9 @@ class MainWindow(QMainWindow):
         self.show()
 
     def readsettings(self):
-        settings = QSettings('Sigil','ReaderPlugin')
-        if settings.value('geometry', None):
-            self.restoreGeometry(settings.value('geometry'))
+        b64val = self.prefs.get('geometry', None)
+        if b64val:
+            self.restoreGeometry(QByteArray.fromBase64(QByteArray(b64val.encode('ascii'))))
 
     # method for updating the title of the window
     def update_title(self):
@@ -149,7 +149,6 @@ class MainWindow(QMainWindow):
             return;
         height = self.browser.height()
         width =    self.browser.width()
-        # title = self.browser.page().title()
         self.setWindowTitle('Screen Size:'  +  ' (%dx%d)' % (width, height))
 
     def done(self):
@@ -160,45 +159,38 @@ class MainWindow(QMainWindow):
         self.update_title()
 
     def closeEvent(self, ev):
-        settings = QSettings('Sigil','ReaderPlugin')
-        settings.setValue('geometry', self.saveGeometry())
+        b64val = str(self.saveGeometry().toBase64(), 'ascii')
+        self.prefs['geometry'] = b64val
         QMainWindow.closeEvent(self, ev)
 
 
 # the plugin entry point
 def run(bk):
 
-    epubversion = "2.0"
-    if bk.launcher_version() >= 20160102:
-        epubversion = bk.epub_version()
-
-    # get users preferences and set defaults for width of images in gui (in pixels)
-    prefs = bk.getPrefs()
-    prefs.defaults['basewidth'] = 500
-
-    if bk.launcher_version() < 20210201:
+    if bk.launcher_version() < 20210430:
         print("\nThis plugin requires Sigil-1.6.0 or later to function.")
         return -1
     
+    # get users preferences and set defaults for width of images in gui (in pixels)
+    prefs = bk.getPrefs()
+
     # create your own current copy of all ebook contents in destination directory
     # it must be relative and under the index.html directory inside an epub_content directory
     viewer_home = os.path.join(SCRIPT_DIR, 'viewer', 'cloud-reader-lite')
     epub_home = os.path.join(viewer_home, 'epub_content')
-    print(viewer_home)
+    os.makedirs(epub_home, exist_ok = True)
 
     bookdir = tempfile.mkdtemp(suffix=None, prefix=None, dir=epub_home)
     bookdir_name = os.path.split(bookdir)[-1]
-    print(bookdir)
 
     bk.copy_book_contents_to(bookdir)
-    # must add the mimetype
     data = 'application/epub+zip'
     mpath = os.path.join(bookdir, 'mimetype')
     with open(mpath, 'wb') as f:
         f.write(data.encode('utf-8'))
         f.close()
-    query = 'epub=epub_content/' + bookdir_name + '/'
-    print(query)
+        
+    query = 'epub=epub_content/' +  bookdir_name + '/'
 
     if not ismacos:
         setup_highdpi(bk._w.highdpi)
@@ -210,7 +202,7 @@ def run(bk):
     app.setApplicationName("Readium Cloud Reader Lite Demo")
 
     # creating a main window object
-    window = MainWindow(query)
+    window = MainWindow(query, prefs)
 
     # loop
     app.exec_()
@@ -218,8 +210,8 @@ def run(bk):
     # done with temp folder so clean up after yourself
     shutil.rmtree(bookdir)
     
-    # print("Updating Complete")
-    # bk.savePrefs(prefs)
+    print("Readium Reader Session Complete")
+    bk.savePrefs(prefs)
 
     # Setting the proper Return value is important.
     # 0 - means success
