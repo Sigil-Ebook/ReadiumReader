@@ -213,6 +213,11 @@ def run(bk):
     print("Readium Reader Session Complete")
     bk.savePrefs(prefs)
 
+    # Prevent potential crash when exiting by specifying the order
+    # of deletion. Apparently a known issue with PyQt5 < 5.14
+    # https://stackoverflow.com/questions/59120337/59126660#59126660
+    del window, app
+
     # Setting the proper Return value is important.
     # 0 - means success
     # anything else means failure
