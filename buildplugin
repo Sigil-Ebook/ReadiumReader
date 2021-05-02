@@ -21,6 +21,7 @@ TEMP_DIR = os.path.join(SCRIPT_DIR, PLUGIN_NAME)
 PLUGIN_FILES = ['viewer',
             'reader_demo_v3.py',
             'ChangeLog.txt',
+            'readium_license.txt',
             'plugin.py',
             'plugin.xml',
             'plugin.svg',
