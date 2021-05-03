@@ -119,12 +119,12 @@ class MainWindow(QMainWindow):
         self.browser.loadFinished.connect(self.update_title)
 
         # creating QToolBar for navigation and add close button
-        navtb = QToolBar("Navigation")
-        self.addToolBar(navtb)
-        done_btn = QAction('Close', self)
-        done_btn.setStatusTip('Close Reader')
-        done_btn.triggered.connect(self.done)
-        navtb.addAction(done_btn)
+        # navtb = QToolBar("Navigation")
+        # self.addToolBar(navtb)
+        # done_btn = QAction('Close', self)
+        # done_btn.setStatusTip('Close Reader')
+        # done_btn.triggered.connect(self.done)
+        # navtb.addAction(done_btn)
         
         # build url to launch readium with
         readerpath = os.path.join(SCRIPT_DIR,'viewer','cloud-reader-lite','index.html')
