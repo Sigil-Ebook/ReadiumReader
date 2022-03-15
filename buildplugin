@@ -23,6 +23,7 @@ PLUGIN_FILES = ['viewer',
             'ChangeLog.txt',
             'readium_license.txt',
             'plugin.py',
+            'plugin_utils.py',
             'plugin.xml',
             'plugin.svg',
             'plugin.png',]
