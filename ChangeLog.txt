@@ -1,3 +1,6 @@
+v040
+  - support both Qt5 qnd Qt6 using the latest plugin_utils
+  - properly save plugin app settings between launches
 v030
   - fixed inconsistent handling of file paths across platforms
   - moved away from QSettings to use standard bk.prefs to save geometry

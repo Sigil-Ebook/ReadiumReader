@@ -69,12 +69,6 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
                 # directory already exists
                 pass
         print(localstorepath)
-        s = self.settings()
-        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
-        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
-        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, True)
-        s.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
-        s.setAttribute(QWebEngineSettings.WebAttribute.AllowWindowActivationFromJavaScript, True)
         w = app.primaryScreen().availableGeometry().width()
         self._size_hint = QtCore.QSize(int(w/3), int(w/2))
         # How to get bookid to add to QWebEngineProfile name?
@@ -83,6 +77,13 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         self._profile.setHttpCacheType(QWebEngineProfile.MemoryHttpCache)
         self._page = WebPage(self._profile, self)
         self.setPage(self._page)
+        # Set this View's page settings
+        s = self.settings()
+        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+        s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, True)
+        s.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
+        s.setAttribute(QWebEngineSettings.WebAttribute.AllowWindowActivationFromJavaScript, True)
         # Save Readium prefs to plugin prefs
         self._page.profile().setPersistentStoragePath(localstorepath)
         print(self._page.profile().isOffTheRecord())
