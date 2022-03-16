@@ -58,9 +58,16 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
 
     def __init__(self, parent=None):
         QtWebEngineWidgets.QWebEngineView.__init__(self, parent)
-        self._profile = QWebEngineProfile('ReadiumReaderSigilPluginSettings')
         app = PluginApplication.instance()
-        localstorepath = app.bk._w.usrsupdir + '/local-storage'
+        # Plugin prefs folder
+        pfolder = os.path.dirname(app.bk._w.plugin_dir) + '/plugins_prefs/' + app.bk._w.plugin_name
+        localstorepath = pfolder + '/local-storage'
+        if not os.path.exists(localstorepath):
+            try:
+                os.makedirs(localstorepath, 0o700)
+            except FileExistsError:
+                # directory already exists
+                pass
         print(localstorepath)
         s = self.settings()
         s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
@@ -68,15 +75,18 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         s.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, True)
         s.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
         s.setAttribute(QWebEngineSettings.WebAttribute.AllowWindowActivationFromJavaScript, True)
-        w = QtWidgets.QApplication.primaryScreen().availableGeometry().width()
+        w = app.primaryScreen().availableGeometry().width()
         self._size_hint = QtCore.QSize(int(w/3), int(w/2))
+        # How to get bookid to add to QWebEngineProfile name?
+        self._profile = QWebEngineProfile('ReadiumReaderSigilPluginSettings')
         self._page = WebPage(self._profile, self)
+        self.setPage(self._page)
+        # Save Readium prefs to plugin prefs
         self._page.profile().setCachePath(localstorepath)
         self._page.profile().setPersistentStoragePath(localstorepath)
         print(self._page.profile().isOffTheRecord())
         print(self._page.profile().cachePath())
         print(self._page.profile().persistentStoragePath())
-        self.setPage(self._page)
 
     def sizeHint(self):
         return self._size_hint
