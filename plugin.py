@@ -79,13 +79,15 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         self._size_hint = QtCore.QSize(int(w/3), int(w/2))
         # How to get bookid to add to QWebEngineProfile name?
         self._profile = QWebEngineProfile('ReadiumReaderSigilPluginSettings')
+        # Set HTTP Cache type to memory only
+        self._profile.setHttpCacheType(QWebEngineProfile.MemoryHttpCache)
         self._page = WebPage(self._profile, self)
         self.setPage(self._page)
         # Save Readium prefs to plugin prefs
-        self._page.profile().setCachePath(localstorepath)
         self._page.profile().setPersistentStoragePath(localstorepath)
         print(self._page.profile().isOffTheRecord())
-        print(self._page.profile().cachePath())
+        print(self._page.profile().cachePath())  # Verify that nothing gets written here
+        print(self._page.profile().httpCacheType())
         print(self._page.profile().persistentStoragePath())
 
     def sizeHint(self):
