@@ -1,11 +1,11 @@
 **[Plugin] ReadiumReader - a version of Readium's Cloud-Reader-LITE for Sigil **
 
-Updated: May 2, 2021
+Updated: March 17, 2022
 
-Current Version: "0.3.0"
+Current Version: "0.4.0"
 
 This plugin implements an epub3 reader for the epub currently being edited in Sigil.
-It uses PyQt5 and PyQtWebengine to create a browser like main window and then loads
+It uses PyQt5 and PyQtWebengine or PySide6 to create a browser like main window and then loads
 Readium's cloud-reader-LITE from Readium's js-viewer project to implement the epub reader.
 
 See https://github.com/readium/readium-js-viewer
