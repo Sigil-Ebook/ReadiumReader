@@ -1,3 +1,6 @@
+v041
+  - update to the very latest version of plugin_utils.py
+
 v040
   - support both Qt5 qnd Qt6 using the latest plugin_utils
   - properly save plugin app settings between launches
